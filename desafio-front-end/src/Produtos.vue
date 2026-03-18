@@ -91,7 +91,7 @@ function attLista(){
 <template>
   <div class="d-flex flex-column p-4 bg-primary bg-gradient"  style="height: 100vh;">
 
-    <Produto v-if="teste.value" @added="() => {attLista()}" :token="token" :produto="selecionado"/>
+    <Produto v-if="teste.value" @added="() => {closeAdd(); attLista()}" :token="token" :produto="selecionado"/>
     
     <div v-else>
       <div class="d-flex justify-content-end mb-2">
@@ -120,7 +120,7 @@ function attLista(){
           </thead>
           <tbody>
             <tr v-for="produto in listProduto" @click="openView(produto)">
-              <td>{{produto.imagem}}</td>
+              <td><img class="img-fluid" :src="'http://localhost:8000'+produto.url"></td>
               <td>{{ produto.nome }}</td>
               <td class="text-truncate">{{ produto.descricao }}</td>
               <td>{{ produto.preco }}</td>

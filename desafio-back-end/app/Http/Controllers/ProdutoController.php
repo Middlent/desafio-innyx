@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Produto;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -13,7 +14,11 @@ class ProdutoController extends Controller
      */
     public function index()
     {
-        return Produto::paginate(15);
+        $produtos = Produto::paginate(15);
+        foreach($produtos as $produto){
+            $produto->url = Storage::url($produto->imagem);
+        } 
+        return $produtos;
     }
 
     /**
@@ -28,15 +33,20 @@ class ProdutoController extends Controller
             'descricao' => ['required', 'max:100'],
             'preco' => ['required', 'gte:0'],
             'validade' => ['required', 'date', Rule::date()->afterToday()],
-            'imagem' => ['required', 'unique:produtos'],
+            'imagem' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'categoria_id' => ['required', 'exists:categorias,id'],
         ]);
+
+        $file = $request->file('imagem');
+        $originalName = $file->getClientOriginalName();
+        $path = $file->store('images', 'public');
+        
 
         $produto->nome = $request->nome;
         $produto->descricao = $request->descricao;
         $produto->preco = $request->preco;
         $produto->validade = $request->validade;
-        $produto->imagem = $request->imagem;
+        $produto->imagem = $path;
         $produto->categoria_id = $request->categoria_id;
  
         $produto->save();
