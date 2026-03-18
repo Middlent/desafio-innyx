@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-  token: String
+  token: String,
+  produto: {}
 })
 
 const emit = defineEmits(['added'])
+
+const editing = ref(false)
 
 const phNome = ref('Nome')
 const phDescricao = ref('Descricao')
@@ -54,13 +57,15 @@ function registrar(){
 </script>
 
 <template>
-  <input :placeholder='phNome' v-model='txtNome'/><br>
-  <input :placeholder='phDescricao'  v-model='txtDescricao'/><br>
-  <input :placeholder='phPreco'  v-model='txtPreco'/><br>
-  <input :placeholder='phValidade' v-model='txtValidade'/><br>
-  <input :placeholder='phImagem'  v-model='txtImagem'/><br>
-  <input :placeholder='phCategoria'  v-model='txtCategoria'/><br>
-  <button @click = 'registrar'>{{btnRegistrar}}</button><br>
-  <br>
+  <div v-if="!produto">
+    <input :placeholder='phNome' v-model='txtNome'/><br>
+    <input :placeholder='phDescricao'  v-model='txtDescricao'/><br>
+    <input :placeholder='phPreco'  v-model='txtPreco'/><br>
+    <input :placeholder='phValidade' v-model='txtValidade'/><br>
+    <input :placeholder='phImagem'  v-model='txtImagem'/><br>
+    <input :placeholder='phCategoria'  v-model='txtCategoria'/><br>
+    <button @click = 'registrar'>{{btnRegistrar}}</button><br>
+    <br>
+  </div>
 </template>
 <style scoped></style>
