@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produto;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,7 @@ class ProdutoController extends Controller
         $produtos = Produto::paginate(15);
         foreach($produtos as $produto){
             $produto->url = Storage::url($produto->imagem);
+            $produto->categoria = Categoria::find($produto->categoria_id)->nome;
         } 
         return $produtos;
     }
@@ -72,7 +74,7 @@ class ProdutoController extends Controller
             'descricao' => ['required', 'max:100'],
             'preco' => ['required', 'gte:0'],
             'validade' => ['required', 'date', Rule::date()->afterToday()],
-            'imagem' => ['required', 'unique:produtos'],
+            'imagem' => ['required', Rule::unique('produtos')->ignore($produto->id)],
             'categoria_id' => ['required', 'exists:categorias,id'],
         ]);
 
@@ -95,5 +97,10 @@ class ProdutoController extends Controller
     {
         $produto -> delete();
         return response()->json($produto, 200);
+    }
+
+    public function categories()
+    {
+        return Categoria::all();
     }
 }

@@ -12,6 +12,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/categoria', [ProdutoController::class, 'categories']);
     Route::get('/produto', [ProdutoController::class, 'index']);
     Route::get('/produto/{produto}', [ProdutoController::class, 'show']);
     Route::post('/produto', [ProdutoController::class, 'store']);

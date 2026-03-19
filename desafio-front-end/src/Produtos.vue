@@ -8,12 +8,15 @@ const props = defineProps({
 
 const btnLogout = ref('Sair')
 const btnAdd = ref('+')
-const btnEditar = ref('Editar')
 const btnDeletar = ref('Deletar')
 
 const listProduto:any = ref([])
 const adding = ref(false)
 const selecionado:any = ref(null)
+
+const max_page = ref(1)
+const current_page = ref(1)
+
 
 const teste = computed(() => {
   return adding
@@ -70,7 +73,7 @@ function deletar(produto:any){
 
 function attLista(){
   if(props.token){
-    fetch('//localhost:8000/api/produto', {
+    fetch(`//localhost:8000/api/produto?page=${current_page.value}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.token}`,
@@ -81,7 +84,8 @@ function attLista(){
     .then(response => response.json())
     .then(data => {
       listProduto.value = data.data
-      console.log(data.data)
+      max_page.value = data.last_page
+      console.log(data)
     })
     .catch(error => console.error('Error:', error));
   }
@@ -91,11 +95,16 @@ function attLista(){
 <template>
   <div class="d-flex flex-column p-4 bg-primary bg-gradient"  style="height: 100vh;">
 
-    <Produto v-if="teste.value" @added="() => {closeAdd(); attLista()}" :token="token" :produto="selecionado"/>
+    <Produto v-if="teste.value" @added="() => {closeAdd(); attLista()}" @deleted="(produto:any) => {deletar(produto); closeAdd(); attLista();}" :token="token" :produto="selecionado"/>
     
     <div v-else>
-      <div class="d-flex justify-content-end mb-2">
-        <button class="btn btn-light" @click="logout">{{ btnLogout }}</button>
+      <div class="d-flex flex-row">
+        <h1 class="w-50 ms-2 text-white">
+          Produtos
+        </h1>
+        <div class="d-flex justify-content-end mb-2 w-50">
+          <button class="btn btn-light" @click="logout">{{ btnLogout }}</button>
+        </div>
       </div>
       <div class="bg-light bg-opacity-75 rounded-3">
         <div class="input-group p-1">
@@ -105,7 +114,7 @@ function attLista(){
         </div>
       </div>
       
-      
+
       <div class="p-2 bg-primary-subtle mt-1 rounded">
         <table class="table table-responsive table-primary table-hover" style="table-layout: fixed">
           <thead>
@@ -123,11 +132,11 @@ function attLista(){
               <td><img class="img-fluid" :src="'http://localhost:8000'+produto.url"></td>
               <td>{{ produto.nome }}</td>
               <td class="text-truncate">{{ produto.descricao }}</td>
-              <td>{{ produto.preco }}</td>
-              <td>{{ produto.validade }}</td>
+              <td>R$ {{ produto.preco.toFixed(2) }}</td>
+              <td>{{produto.validade.split('-')[2]}}/{{produto.validade.split('-')[1]}}/{{produto.validade.split('-')[0]}}</td>
               <td class="position-relative">
                 <button
-                  @click="deletar(produto)" 
+                  @click.stop="deletar(produto)" 
                   class="btn btn-danger w-auto h-auto stretched-link d-block">
                   {{btnDeletar}}
                 </button>
@@ -135,6 +144,19 @@ function attLista(){
             </tr>
           </tbody>
         </table>  
+      </div>
+      
+      <div class="p-2 bg-primary-subtle mt-1 rounded">
+        <div class="mb-2 ms-1">
+          Página {{ current_page }}
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li v-if='current_page > 1' class="page-item"><a class="page-link" href="#" @click="current_page=current_page-1; attLista()">Anterior</a></li>
+                <li v-for="i in max_page" class="page-item"><a class="page-link" href="#" @click="current_page=i; attLista()">{{i}}</a></li>
+                <li v-if="current_page < max_page" class="page-item" ><a class="page-link" href="#" @click="current_page=current_page+1; attLista()">Proximo</a></li>
+            </ul>
+        </nav>
       </div>
     </div>
   </div>
