@@ -8,6 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 use App\Models\User;
+use App\Models\Categoria;
 
 class AuthController extends Controller
 {
@@ -115,6 +116,14 @@ class AuthController extends Controller
 
             $user->save();
             
+        }
+        if(Categoria::count() == 0){
+            for($i = 1;$i < 6; $i++){
+                $categoria = new Categoria;
+
+                $categoria->nome = "Exemplo ".$i;
+                $categoria->save();
+            }
         }
     }
 
