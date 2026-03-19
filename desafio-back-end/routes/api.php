@@ -7,9 +7,10 @@ use App\Http\Controllers\ProdutoController;
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    Route::get('/user', [AuthController::class, 'index']);
+    Route::get('/user/search/{prompt}', [AuthController::class, 'search']);
+    Route::patch('/user/{user}', [AuthController::class, 'changeAuthority']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/categoria', [ProdutoController::class, 'categories']);
@@ -22,5 +23,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
+Route::post('/setup', [AuthController::class, 'setup']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

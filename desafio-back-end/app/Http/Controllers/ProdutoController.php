@@ -28,32 +28,36 @@ class ProdutoController extends Controller
      */
     public function store(Request $request)
     {
-        $produto = new Produto;
-        
-        $request->validate([
-            'nome' => ['required', 'max:50'],
-            'descricao' => ['required', 'max:100'],
-            'preco' => ['required', 'gte:0'],
-            'validade' => ['required', 'date', Rule::date()->afterToday()],
-            'imagem' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'categoria_id' => ['required', 'exists:categorias,id'],
-        ]);
+        $user = $request->user();
 
-        $file = $request->file('imagem');
-        $originalName = $file->getClientOriginalName();
-        $path = $file->store('images', 'public');
-        
+        if($user->tokenCan('manageProduto')){
+            $produto = new Produto;
+            
+            $request->validate([
+                'nome' => ['required', 'max:50'],
+                'descricao' => ['required', 'max:100'],
+                'preco' => ['required', 'gte:0'],
+                'validade' => ['required', 'date', Rule::date()->afterToday()],
+                'imagem' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+                'categoria_id' => ['required', 'exists:categorias,id'],
+            ]);
 
-        $produto->nome = $request->nome;
-        $produto->descricao = $request->descricao;
-        $produto->preco = $request->preco;
-        $produto->validade = $request->validade;
-        $produto->imagem = $path;
-        $produto->categoria_id = $request->categoria_id;
- 
-        $produto->save();
- 
-        return response()->json($produto, 201);
+            $file = $request->file('imagem');
+            $originalName = $file->getClientOriginalName();
+            $path = $file->store('images', 'public');
+            
+
+            $produto->nome = $request->nome;
+            $produto->descricao = $request->descricao;
+            $produto->preco = $request->preco;
+            $produto->validade = $request->validade;
+            $produto->imagem = $path;
+            $produto->categoria_id = $request->categoria_id;
+    
+            $produto->save();
+    
+            return response()->json($produto, 201);
+        }
     }
 
     /**
@@ -69,25 +73,29 @@ class ProdutoController extends Controller
      */
     public function update(Request $request, Produto $produto)
     {
-        $request->validate([
-            'nome' => ['required', 'max:50'],
-            'descricao' => ['required', 'max:100'],
-            'preco' => ['required', 'gte:0'],
-            'validade' => ['required', 'date', Rule::date()->afterToday()],
-            'imagem' => ['required', Rule::unique('produtos')->ignore($produto->id)],
-            'categoria_id' => ['required', 'exists:categorias,id'],
-        ]);
+        $user = $request->user();
 
-        $produto->nome = $request->nome;
-        $produto->descricao = $request->descricao;
-        $produto->preco = $request->preco;
-        $produto->validade = $request->validade;
-        $produto->imagem = $request->imagem;
-        $produto->categoria_id = $request->categoria_id;
- 
-        $produto->save();
- 
-        return response()->json($produto, 201);
+        if($user->tokenCan('manageProduto')){
+            $request->validate([
+                'nome' => ['required', 'max:50'],
+                'descricao' => ['required', 'max:100'],
+                'preco' => ['required', 'gte:0'],
+                'validade' => ['required', 'date', Rule::date()->afterToday()],
+                'imagem' => ['required', Rule::unique('produtos')->ignore($produto->id)],
+                'categoria_id' => ['required', 'exists:categorias,id'],
+            ]);
+
+            $produto->nome = $request->nome;
+            $produto->descricao = $request->descricao;
+            $produto->preco = $request->preco;
+            $produto->validade = $request->validade;
+            $produto->imagem = $request->imagem;
+            $produto->categoria_id = $request->categoria_id;
+    
+            $produto->save();
+    
+            return response()->json($produto, 201);
+        }
     }
 
     /**

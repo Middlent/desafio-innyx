@@ -4,13 +4,14 @@ import Register from './Register.vue'
 import Login from './Login.vue'
 import Produtos from './Produtos.vue'
 
-const token = ref('')
+const token:any = ref(null)
 const routes:any = {
   '/': Produtos,
   '/login': Login,
   '/register': Register
 }
 
+setup()
 token_check()
 
 const currentPath = ref(window.location.hash)
@@ -34,10 +35,23 @@ function token_check(){
     window.location.hash = '#'
   }
 }
+
+function setup(){
+  fetch('//localhost:8000/api/setup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body:'{}',
+  })
+  .then(response => response.json())
+  .catch(error => console.error('Error:', error));
+}
 </script>
 
 <template>
-    <component  @token='(token_txt: string) => token = token_txt' :is="currentComponent" :token="token"/>
+    <component  @token='(token_obj: any) => token = token_obj' :is="currentComponent" :token="token"/>
 </template>
 <style scoped>
 </style>

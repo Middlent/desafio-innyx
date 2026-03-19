@@ -2,11 +2,12 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-  token: String,
+  token: {},
   produto: {}
 })
 
 const prod:any = props.produto
+const tok:any = props.token
 
 const emit = defineEmits(['added', 'deleted'])
 
@@ -52,7 +53,7 @@ function registrar(){
   fetch('//localhost:8000/api/produto', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${props.token}`,
+      'Authorization': `Bearer ${tok.token}`,
       'Accept': 'application/json'
     },
     body: formData
@@ -79,7 +80,7 @@ function voltar(){
     fetch(`//localhost:8000/api/produto/${prod.id}`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${props.token}`,
+        'Authorization': `Bearer ${tok.token}`,
         'Accept': 'application/json'
       },
       body: formData
@@ -116,11 +117,11 @@ function edit_switch(){
 }
 
 function retrieve_categorias(){
-  if(props.token){
+  if(tok.token){
     fetch('//localhost:8000/api/categoria', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${props.token}`,
+        'Authorization': `Bearer ${tok.token}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
@@ -234,7 +235,7 @@ retrieve_categorias();
           <input class="form-control h-100 text-start" id="floatingInput" placeholder={{phDescricao}} v-model='txtDescricao'>
           <label for="floatingInput">{{phDescricao}}</label>
         </div>
-        <div class="d-flex flex-row">
+        <div v-if="tok.canManageProduto" class="d-flex flex-row">
           <button class="p-2 mt-4 mx-1 btn btn-primary w-50" @click="edit_switch">{{btnEdit}}</button>
           <button class="p-2 mt-4 mx-1 btn btn-danger w-50" @click="emit('deleted',produto)">{{btnDelete}}</button>
         </div>

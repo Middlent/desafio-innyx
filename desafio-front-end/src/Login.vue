@@ -12,9 +12,10 @@ const btnLogar = ref('Entrar')
 const txtEmail = ref('')
 const txtSenha = ref('')
 
-const teste = ref('')
+const loading = ref(false)
 
 function logar(){
+  loading.value = true
   const postData = {
     email: txtEmail.value,
     password: txtSenha.value,
@@ -31,7 +32,8 @@ function logar(){
   })
   .then(response => response.json())
   .then(data => {
-    emit('token',data.plainTextToken)
+    emit('token',data)
+    loading.value = false
   })
   .catch(error => console.error('Error:', error));
 }
@@ -50,7 +52,10 @@ function logar(){
         <input type="password" class="form-control" id="floatingPassword" placeholder={{phSenha}} v-model='txtSenha'>
         <label for="floatingPassword">{{phSenha}}</label>
       </div>
-      <button class="p-2 mt-4 btn btn-primary" @click = 'logar'>{{btnLogar}}</button>
+      <div v-if="loading" class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <button v-else class="p-2 mt-4 btn btn-primary" @click = 'logar'>{{btnLogar}}</button>
       <a class="p-1 btn btn-link" href="#/register">{{btnRegistrar}}</a>
     </div>
   </div>

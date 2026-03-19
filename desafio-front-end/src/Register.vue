@@ -14,9 +14,10 @@ const txtNome = ref('')
 const txtEmail = ref('')
 const txtSenha = ref('')
 
-const teste = ref('')
+const loading = ref(false)
 
 function registrar(){
+  loading.value = true
   const postData = {
     name: txtNome.value,
     email: txtEmail.value,
@@ -34,7 +35,8 @@ function registrar(){
   })
   .then(response => response.json())
   .then(data => {
-    emit('token',data.plainTextToken)
+    emit('token',data)
+    loading.value = false
   })
   .catch(error => console.error('Error:', error));
 
@@ -59,7 +61,10 @@ function registrar(){
         <input type="password" class="form-control" id="floatingPassword" placeholder={{phSenha}} v-model='txtSenha'>
         <label for="floatingPassword">{{phSenha}}</label>
         </div>
-        <button class="p-2 mt-4 btn btn-primary" @click = 'registrar'>{{btnRegistrar}}</button>
+        <div v-if="loading" class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <button v-else class="p-2 mt-4 btn btn-primary" @click = 'registrar'>{{btnRegistrar}}</button>
         <a class="p-1 btn btn-link" href="#/login">{{btnLogar}}</a>
     </div>
   </div>
