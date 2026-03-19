@@ -91,7 +91,7 @@ function registrar(){
 }
 
 function voltar(){
-  if(editing){
+  if(editing.value){
     const formData = new FormData();
     formData.append('nome', txtNome.value)
     formData.append('descricao', txtDescricao.value)
