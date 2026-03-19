@@ -12,6 +12,8 @@ const btnLogar = ref('Entrar')
 const txtEmail = ref('')
 const txtSenha = ref('')
 
+const txtError = ref('')
+
 const loading = ref(false)
 
 function logar(){
@@ -32,10 +34,15 @@ function logar(){
   })
   .then(response => response.json())
   .then(data => {
-    emit('token',data)
+    console.log(data)
+    if(!data.token){
+      txtError.value = "Credenciais inválidas"
+    }else{
+      emit('token',data)
+    }
     loading.value = false
   })
-  .catch(error => console.error('Error:', error));
+  .catch(error => console.error('Errrrror:', error));
 }
 
 </script>
@@ -44,6 +51,7 @@ function logar(){
   <div class="d-flex justify-content-center align-items-center bg-primary bg-gradient" style="height: 100vh; overflow-y: auto;">
     <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3" >
       <h1 class="my-4 mx-auto">Login</h1>
+      <p class="text-danger ms-2">{{ txtError }}</p>
       <div class="form-floating mb-1">
         <input type="email" class="form-control" id="floatingInput" placeholder={{phEmail}} v-model='txtEmail'>
         <label for="floatingInput">{{phEmail}}</label>

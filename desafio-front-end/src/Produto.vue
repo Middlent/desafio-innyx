@@ -33,6 +33,11 @@ const txtPreco = ref('')
 const txtValidade = ref('')
 const txtCategoria = ref('')
 
+const errorNome = ref('')
+const errorDescricao = ref('')
+const errorPreco = ref('')
+const errorValidade = ref('')
+
 function handleFileChange(event:any){
   const file = event.target.files[0];
   if (!file) return;
@@ -60,8 +65,27 @@ function registrar(){
   })
   .then(response => response.json())
   .then(data => {
-    console.log(data)
-    emit('added')
+      console.log(data)
+    if(data.errors){
+      if(data.errors.nome){
+        errorNome.value = 'Nome inválido'
+      }else{errorNome.value = ''}
+      if(data.errors.descricao){
+        errorDescricao.value = 'Descricao inválido'
+      }else{errorDescricao.value = ''}
+      if(data.errors.preco){
+        errorPreco.value = 'Preco inválido'
+      }else{errorPreco.value = ''}
+      if(data.errors.validade){
+        errorValidade.value = 'Validade inválido'
+      }else{errorValidade.value = ''}
+    }else{
+      errorNome.value = ''
+      errorDescricao.value = ''
+      errorPreco.value = ''
+      errorValidade.value = ''
+      emit('added')
+    }
   })
   .catch(error => console.error('Error:', error)); 
 }
@@ -88,8 +112,27 @@ function voltar(){
     .then(response => response.json())
     .then(data => {
       console.log(data)
+    if(data.errors){
+      if(data.errors.nome){
+        errorNome.value = 'Nome inválido'
+      }else{errorNome.value = ''}
+      if(data.errors.descricao){
+        errorDescricao.value = 'Descricao inválido'
+      }else{errorDescricao.value = ''}
+      if(data.errors.preco){
+        errorPreco.value = 'Preco inválido'
+      }else{errorPreco.value = ''}
+      if(data.errors.validade){
+        errorValidade.value = 'Validade inválido'
+      }else{errorValidade.value = ''}
+    }else{
+      errorNome.value = ''
+      errorDescricao.value = ''
+      errorPreco.value = ''
+      errorValidade.value = ''
       emit('added')
-    })
+    }
+  })
     .catch(error => console.error('Error:', error)); 
   }
   else{
@@ -149,21 +192,26 @@ retrieve_categorias();
         <div class="form-floating mb-1">
           <input class="form-control" type="file" id="formFile" @change="handleFileChange">
         </div>
+        <div class="text-danger">{{ errorNome }}</div>
         <div class="form-floating mb-1">
           <input class="form-control" id="floatingInput" placeholder={{phNome}} v-model='txtNome'>
           <label for="floatingInput">{{phNome}}</label>
         </div>
+        <div class="text-danger">{{ errorDescricao }}</div>
         <div class="form-floating h-25 mb-1">
           <input class="form-control h-100 text-start" id="floatingInput" placeholder={{phDescricao}} v-model='txtDescricao'>
           <label for="floatingInput">{{phDescricao}}</label>
         </div>
         <div class="d-flex flex-row">
+          
           <div class="form-floating">
             <input class="form-control h-100" id="floatingInput" placeholder={{phPreco}} v-model='txtPreco'>
+            <div class="text-danger">{{ errorPreco }}</div>
             <label for="floatingInput">{{phPreco}}</label>
           </div>
           <div class="form-floating">
             <input type="date" class="form-control h-100" id="floatingInput" placeholder={{phValidade}} v-model='txtValidade'>
+            <div class="text-danger">{{ errorValidade }}</div>
             <label for="floatingInput">{{phValidade}}</label>
           </div>
           <div class="d-flex flex-column w-25">
@@ -181,9 +229,9 @@ retrieve_categorias();
   </div>
   <div v-else>
     <div class="d-flex justify-content-center align-items-center bg-primary bg-gradient" style="height: 95vh;">
-      <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3 w-75">
+      <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3 w-50">
         <div class="d-flex flex-row mb-2" >
-          <div class="w-75">
+          <div class="w-50">
             <img class="img-fluid img-thumbnail rounded float-start h-100" :src="'http://localhost:8000'+prod.url">
           </div>
           <div class="w-50">
@@ -194,6 +242,7 @@ retrieve_categorias();
               </div>
               <div v-else class="form-floating mb-2">
                 <input class="form-control" id="floatingInput" placeholder={{phNome}} v-model='txtNome'>
+                <div class="text-danger">{{ errorNome }}</div>
                 <label for="floatingInput">{{phNome}}</label>
               </div>
               <div v-if="!editing">
@@ -202,6 +251,7 @@ retrieve_categorias();
               </div>
               <div v-else class="form-floating mb-2">
                 <input class="form-control h-100" id="floatingInput" placeholder={{phPreco}} v-model='txtPreco'>
+                <div class="text-danger">{{ errorPreco }}</div>
                 <label for="floatingInput">{{phPreco}}</label>
               </div>
               <div v-if="!editing">
@@ -210,6 +260,7 @@ retrieve_categorias();
               </div>
               <div v-else class="form-floating mb-2">
                 <input type="date" class="form-control h-100" id="floatingInput" placeholder={{phValidade}} v-model='txtValidade'>
+                <div class="text-danger">{{ errorValidade }}</div>
                 <label for="floatingInput">{{phValidade}}</label>
               </div>
               <div v-if="!editing">
@@ -233,6 +284,7 @@ retrieve_categorias();
         </div>
         <div v-else class="form-floating h-25 mb-1">
           <input class="form-control h-100 text-start" id="floatingInput" placeholder={{phDescricao}} v-model='txtDescricao'>
+          <div class="text-danger">{{ errorDescricao }}</div>
           <label for="floatingInput">{{phDescricao}}</label>
         </div>
         <div v-if="tok.canManageProduto" class="d-flex flex-row">
