@@ -37,6 +37,7 @@ function token_check(){
 </script>
 
 <template>
-    <component @token='(token_txt: string) => token = token_txt' :is="currentComponent" :token="token"/>
+    <component  @token='(token_txt: string) => token = token_txt' :is="currentComponent" :token="token"/>
 </template>
-<style scoped></style>
+<style scoped>
+</style>

@@ -99,6 +99,11 @@ class ProdutoController extends Controller
         return response()->json($produto, 200);
     }
 
+    public function search(String $prompt)
+    {
+        return Produto::where('nome','like','%'.$prompt.'%')->orWhere('descricao','like','%'.$prompt.'%')->paginate(15);
+    }
+
     public function categories()
     {
         return Categoria::all();

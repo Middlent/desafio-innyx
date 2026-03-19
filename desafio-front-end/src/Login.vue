@@ -39,7 +39,7 @@ function logar(){
 </script>
 
 <template>
-  <div class="d-flex justify-content-center align-items-center bg-primary bg-gradient" style="height: 100vh;">
+  <div class="d-flex justify-content-center align-items-center bg-primary bg-gradient" style="height: 100vh; overflow-y: auto;">
     <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3" >
       <h1 class="my-4 mx-auto">Login</h1>
       <div class="form-floating mb-1">

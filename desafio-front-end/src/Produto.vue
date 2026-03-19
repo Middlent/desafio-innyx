@@ -143,7 +143,7 @@ retrieve_categorias();
 <template>
   <div v-if="!prod">
     <div class="d-flex justify-content-center align-items-center bg-primary bg-gradient" style="height: 95vh;">
-      <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3 w-75 h-75">
+      <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3 w-75">
         <h1 class="mb-4 mx-auto">Novo Produto</h1>
         <div class="form-floating mb-1">
           <input class="form-control" type="file" id="formFile" @change="handleFileChange">
@@ -165,7 +165,7 @@ retrieve_categorias();
             <input type="date" class="form-control h-100" id="floatingInput" placeholder={{phValidade}} v-model='txtValidade'>
             <label for="floatingInput">{{phValidade}}</label>
           </div>
-          <div class="d-flex flex-column w-25 h-100">
+          <div class="d-flex flex-column w-25">
             <select class="w-100 h-100" v-model="txtCategoria">
               <option disabled value="">{{phCategoria}}</option>
               <option v-for='categoria in listCategoria' :value="categoria.id">
@@ -180,7 +180,7 @@ retrieve_categorias();
   </div>
   <div v-else>
     <div class="d-flex justify-content-center align-items-center bg-primary bg-gradient" style="height: 95vh;">
-      <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3 w-75 h-100">
+      <div class="d-flex flex-column p-4 bg-primary-subtle bg-gradient rounded-3 w-75">
         <div class="d-flex flex-row mb-2" >
           <div class="w-75">
             <img class="img-fluid img-thumbnail rounded float-start h-100" :src="'http://localhost:8000'+prod.url">

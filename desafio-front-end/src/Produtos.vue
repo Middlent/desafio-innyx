@@ -14,9 +14,14 @@ const listProduto:any = ref([])
 const adding = ref(false)
 const selecionado:any = ref(null)
 
+const loading = ref(false)
+
 const max_page = ref(1)
 const current_page = ref(1)
 
+const txtSearch = ref('')
+const prompt = ref('')
+const searching = ref(false)
 
 const teste = computed(() => {
   return adding
@@ -71,9 +76,26 @@ function deletar(produto:any){
 
 }
 
+function search(){
+  if(txtSearch.value == ''){
+    searching.value = false
+  }else{
+    searching.value = true
+    prompt.value = txtSearch.value
+    current_page.value = 1
+  }
+  attLista()
+}
+
 function attLista(){
+  loading.value = true
   if(props.token){
-    fetch(`//localhost:8000/api/produto?page=${current_page.value}`, {
+    let fetchUrl = `//localhost:8000/api/produto`
+    if(searching.value){
+      fetchUrl += `/search/${prompt.value}`
+    }
+    fetchUrl += `?page=${current_page.value}`
+    fetch(fetchUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.token}`,
@@ -86,6 +108,7 @@ function attLista(){
       listProduto.value = data.data
       max_page.value = data.last_page
       console.log(data)
+      loading.value = false
     })
     .catch(error => console.error('Error:', error));
   }
@@ -93,7 +116,7 @@ function attLista(){
 </script>
 
 <template>
-  <div class="d-flex flex-column p-4 bg-primary bg-gradient"  style="height: 100vh;">
+  <div class="d-flex flex-column p-4 bg-primary bg-gradient" style="height: 100vh; overflow-y: auto;">
 
     <Produto v-if="teste.value" @added="() => {closeAdd(); attLista()}" @deleted="(produto:any) => {deletar(produto); closeAdd(); attLista();}" :token="token" :produto="selecionado"/>
     
@@ -109,14 +132,16 @@ function attLista(){
       <div class="bg-light bg-opacity-75 rounded-3">
         <div class="input-group p-1">
           <button class="btn btn-outline-secondary" type="button" @click="openAdd">{{ btnAdd }}</button>
-          <input type="text" class="form-control" placeholder="Pesquisar">
-          <button class="btn btn-outline-secondary" type="button">Buscar</button>
+          <input type="text" class="form-control" placeholder="Pesquisar" v-model='txtSearch'>
+          <button class="btn btn-outline-secondary" type="button" @click="search">Buscar</button>
         </div>
       </div>
-      
-
-      <div class="p-2 bg-primary-subtle mt-1 rounded">
-        <table class="table table-responsive table-primary table-hover" style="table-layout: fixed">
+      <div class="p-2 bg-primary-subtle mt-1 rounded table-responsive">
+        <div v-if="searching">Buscando por "{{ prompt }}" <button class="btn btn-danger opacity-75" @click="txtSearch='';searching=false;attLista()">Cancelar</button></div>
+        <div v-if="loading" class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <table v-else class="table table-primary table-hover" style="table-layout: fixed">
           <thead>
             <tr>
               <th>IMG</th>
@@ -145,7 +170,7 @@ function attLista(){
           </tbody>
         </table>  
       </div>
-      
+
       <div class="p-2 bg-primary-subtle mt-1 rounded">
         <div class="mb-2 ms-1">
           Página {{ current_page }}
